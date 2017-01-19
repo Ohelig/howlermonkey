@@ -9,15 +9,15 @@ from BeautifulSoup import BeautifulSoup
 from selenium import webdriver
 
 def cleanString(dirty):
-    # Convert to UTF-8
-    cleaner = dirty.encode('utf8')
+    if isinstance(dirty, str):
+        # Convert to UTF-8
+        dirty = unicode(dirty, encoding='utf-8')
 
     # Unescape html entities
-    cleaner = cleaner.replace("%2520", " ").replace("%22", "").replace("&#039;", "'")
-    clean = h.unescape(cleaner)
+    dirty = dirty.replace("%2520", " ").replace("%22", "").replace("&#039;", "'")
+    clean = h.unescape(dirty)
 
     return clean
-
 
 # Create the driver
 driver = webdriver.PhantomJS(executable_path='/usr/local/lib/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs')
@@ -45,10 +45,6 @@ if args.mode == "list":
     with args.playlistFile as f:
         for playlistUrl in f:
             print("Parsing playlist: " + playlistUrl)
-
-            # Make a GET request and parse the html into soup
-            # response = requests.get(playlistUrl)
-            # soup = BeautifulSoup(response.text)
 
             driver.get(playlistUrl)
             WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "all-episodes")))
@@ -144,8 +140,16 @@ if args.mode == "list":
             for index in range(len(episodes)):
                 episode = episodes[index]
 
+                if episode['link'] == 'null':
+                    print('   No .mp3 link for this episode. Skipping...')
+                    continue
+
                 # Parse filename
-                filename = cleanString(episode['link'].split("filename=")[1].split("%22&")[0])
+                if "filename=" in episode['link'] and "%22&" in episode['link']:
+                    filename = cleanString(episode['link'].split("filename=")[1].split("%22&")[0])
+                else:
+                    # The link does not have the filename parameter. Use the episode name
+                    filename = episode['name'] + '.mp3'
 
                 # If the show listed episode numbers, add them to the filename
                 if episode['number'] != "":
@@ -156,7 +160,7 @@ if args.mode == "list":
 
                 episodeLine = episode['name'] + " - " + episode['date'] + " - " + episode['length'] + "\n\t" + episode[
                     'description'] + "\n\n"
-                f.write(cleanString(episodeLine))
+                f.write(cleanString(episodeLine).encode('utf-8'))
 
                 # Prepare the wget string and execute
                 procString = "wget --quiet '" + episode['link'] + "' -O " + '"' + showDirectory + filename + '"'
