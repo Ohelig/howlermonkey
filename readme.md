@@ -16,9 +16,9 @@ $> python ./howler.py ./playlistLinks.txt
 </pre>
 
 ## Requirements
-* selenium, BeautifulSoupp - Install with pip
+* selenium, BeautifulSoup - <code>pip install selenium, BeautifulSoup</code>
 * NodeJS
-* PhantomJS - <code>npm -g install phantomjs-prebuilt</code> or <code>brew install phantomjs</code>
+* PhantomJS - <code>npm -g install phantomjs-prebuilt</code> or <code>brew install phantomjs</code> - You may have to edit the PhantomJS executable path in the script to point to wherever your binary is
 
 ## TODO
 * Write ID3 tags to .mp3 files
