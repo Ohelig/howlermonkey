@@ -28,7 +28,7 @@ $> python ./howler.py ./playlistLinks.txt
 * Write ID3 tags to .mp3 files
 
 ## Known Issues
-* Apostraphes in episode names currently get stripped
+* Apostrophes in episode names currently get stripped
 
 ## License 
 [Creative Commons Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/)
