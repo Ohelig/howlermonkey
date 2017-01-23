@@ -159,7 +159,7 @@ with args.playlistFile as f:
             f.write(cleanString(episodeLine).encode('utf-8'))
 
             # Prepare the wget string and execute
-            procString = "wget --quiet '" + episode['link'] + "' -O " + '"' + showDirectory + filename + '"'
+            procString = "wget --no-clobber --quiet '" + episode['link'] + "' -O " + '"' + showDirectory + filename + '"'
             wgetProc = subprocess.Popen(procString, stdout=subprocess.PIPE, shell=True)
 
             # One download at a time or the output gets all messed up
