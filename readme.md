@@ -17,7 +17,7 @@ $> python ./howler.py ./playlistLinks.txt
 
 ## Requirements
 * selenium, BeautifulSoup
-   * <code>pip install selenium, BeautifulSoup</code>
+   * <code>pip install selenium BeautifulSoup</code>
 * NodeJS
 * PhantomJS - Edit the path in the script to point at your executable
    * <code>npm -g install phantomjs-prebuilt</code> 
