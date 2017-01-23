@@ -108,7 +108,7 @@ with args.playlistFile as f:
         print("   Creating show folder...")
 
         # Create show folder
-        showDirectory = showTitle + "/"
+        showDirectory = showTitle.replace('/', ' ') + "/"
         if not os.path.exists(showDirectory):
             os.makedirs(showDirectory)
 
