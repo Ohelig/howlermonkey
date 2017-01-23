@@ -20,19 +20,31 @@ def cleanString(dirty):
 
     return clean
 
-# Create the driver
-driver = webdriver.PhantomJS(executable_path='/usr/local/lib/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs')
-driver.set_window_size(1024, 768) # optional
-
 # Instantiate the parser
 parser = argparse.ArgumentParser(description='Download podcasts from Howl.fm')
 
-# Add arg
+# Add file arg
 parser.add_argument('playlistFile', type=file,
                     help='A file containing playlist urls to download')
 
+# Add verbose switch
+parser.add_argument('-v', '--verbose', action='store_true', required=False, help='Verbose mode. (PhantomJS logs to ghostdriver.log)')
+
 # Parse the args
 args = parser.parse_args()
+
+# Set verbose flag
+verbose = args.verbose
+
+# Create the driver
+phantomPath = '/usr/local/lib/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs'
+if verbose:
+    # Create ghostdriver.log
+    driver = webdriver.PhantomJS(executable_path=phantomPath)
+else:
+    # Set log destination to /dev/null
+    driver = webdriver.PhantomJS(executable_path=phantomPath,service_log_path=os.path.devnull)
+driver.set_window_size(1024, 768) # optional
 
 # Instantiate the HTMLParser
 h = HTMLParser.HTMLParser()
@@ -108,7 +120,7 @@ with args.playlistFile as f:
         print("   Creating show folder...")
 
         # Create show folder
-        showDirectory = showTitle + "/"
+        showDirectory = showTitle.replace('/', ' ') + "/"
         if not os.path.exists(showDirectory):
             os.makedirs(showDirectory)
 
@@ -159,7 +171,7 @@ with args.playlistFile as f:
             f.write(cleanString(episodeLine).encode('utf-8'))
 
             # Prepare the wget string and execute
-            procString = "wget --quiet '" + episode['link'] + "' -O " + '"' + showDirectory + filename + '"'
+            procString = "wget --no-clobber --quiet '" + episode['link'] + "' -O " + '"' + showDirectory + filename + '"'
             wgetProc = subprocess.Popen(procString, stdout=subprocess.PIPE, shell=True)
 
             # One download at a time or the output gets all messed up
